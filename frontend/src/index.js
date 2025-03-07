@@ -1,4 +1,6 @@
-const { Auth, Amplify } = window.aws_amplify;
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { Auth, Amplify } from 'aws-amplify';
 
 Amplify.configure({
   Auth: {
@@ -8,25 +10,27 @@ Amplify.configure({
   }
 });
 
-function App() {
-  const [user, setUser] = React.useState(null);
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [dashboards, setDashboards] = React.useState([]);
-  const [providers, setProviders] = React.useState([]);
-  const [providerId, setProviderId] = React.useState("");
-  const [providerName, setProviderName] = React.useState("");
+export function App() {
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [dashboards, setDashboards] = useState([]);
+  const [providers, setProviders] = useState([]);
+  const [providerId, setProviderId] = useState('');
+  const [providerName, setProviderName] = useState('');
 
-  React.useEffect(() => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
     if (user) {
-      fetch("http://localhost:55222/dashboards")
+      fetch("http://localhost:55222/dashboards?page=" + currentPage + "&page_size=5")
         .then(res => res.json())
         .then(data => setDashboards(data));
       fetch("http://localhost:55222/providers")
         .then(res => res.json())
         .then(data => setProviders(data));
     }
-  }, [user]);
+  }, [user, currentPage]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -108,6 +112,12 @@ function App() {
         </div>
       ))}
       <h2>Data Providers</h2>
+          <div style={{ margin: "10px 0" }}>
+            <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>Previous</button>
+            <span style={{ margin: "0 10px" }}>Page {currentPage}</span>
+            <button onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
+          </div>
+
       <ul>
         {providers.map(p => (
           <li key={p.id}>
@@ -123,4 +133,7 @@ function App() {
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+if (typeof document !== 'undefined') {
+  ReactDOM.render(<App />, document.getElementById('root'));
+}
+

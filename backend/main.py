@@ -38,8 +38,10 @@ def read_root():
     return {"message": "FastAPI backend running."}
 
 @app.get("/dashboards")
-def get_dashboards():
-    return dashboard_data
+def get_dashboards(page: int = 1, page_size: int = 5):
+    start = (page - 1) * page_size
+    end = start + page_size
+    return dashboard_data[start:end]
 
 @app.get("/providers")
 def list_providers():
