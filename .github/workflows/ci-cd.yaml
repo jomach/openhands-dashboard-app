@@ -23,16 +23,14 @@ jobs:
           pip install fastapi uvicorn pydantic
       - name: Run backend tests
         run: |
-          echo "No backend tests yet."
+          pytest tests/
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 16
       - name: Run frontend tests
         run: |
-          cd frontend
-npm ci
-npm test
+          cd frontend && npm ci && npm test
 
   deploy:
     needs: test

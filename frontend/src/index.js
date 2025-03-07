@@ -19,16 +19,18 @@ export function App() {
   const [providerId, setProviderId] = useState('');
   const [providerName, setProviderName] = useState('');
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     if (user) {
-      fetch("http://localhost:55222/dashboards")
+      fetch("http://localhost:55222/dashboards?page=" + currentPage + "&page_size=5")
         .then(res => res.json())
         .then(data => setDashboards(data));
       fetch("http://localhost:55222/providers")
         .then(res => res.json())
         .then(data => setProviders(data));
     }
-  }, [user]);
+  }, [user, currentPage]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -110,6 +112,12 @@ export function App() {
         </div>
       ))}
       <h2>Data Providers</h2>
+          <div style={{ margin: "10px 0" }}>
+            <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}>Previous</button>
+            <span style={{ margin: "0 10px" }}>Page {currentPage}</span>
+            <button onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
+          </div>
+
       <ul>
         {providers.map(p => (
           <li key={p.id}>
