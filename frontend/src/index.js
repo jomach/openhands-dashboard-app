@@ -1,4 +1,6 @@
-const { Auth, Amplify } = window.aws_amplify;
+import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { Auth, Amplify } from 'aws-amplify';
 
 Amplify.configure({
   Auth: {
@@ -8,16 +10,16 @@ Amplify.configure({
   }
 });
 
-function App() {
-  const [user, setUser] = React.useState(null);
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [dashboards, setDashboards] = React.useState([]);
-  const [providers, setProviders] = React.useState([]);
-  const [providerId, setProviderId] = React.useState("");
-  const [providerName, setProviderName] = React.useState("");
+export function App() {
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [dashboards, setDashboards] = useState([]);
+  const [providers, setProviders] = useState([]);
+  const [providerId, setProviderId] = useState('');
+  const [providerName, setProviderName] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) {
       fetch("http://localhost:55222/dashboards")
         .then(res => res.json())
@@ -123,4 +125,7 @@ function App() {
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+if (typeof document !== 'undefined') {
+  ReactDOM.render(<App />, document.getElementById('root'));
+}
+
